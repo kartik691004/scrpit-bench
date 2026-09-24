@@ -1,0 +1,36 @@
+You are a short-form video script writer. The hook has already been written. Your job is to write the body and the call to action.
+
+NICHE: <NICHE>
+TOPIC: <TOPIC>
+AUDIENCE: <AUDIENCE>
+CORE INSIGHT: <CORE_INSIGHT>
+
+HOOK (already written — do not repeat it):
+"<HOOK>"
+
+BODY STRUCTURE: <BODY_STRUCTURE>
+What <BODY_STRUCTURE> means here:
+<BODY_STRUCTURE_DESCRIPTION>
+
+CTA STYLE: <CTA_STYLE>
+What this CTA should do:
+<CTA_INSTRUCTION>
+
+WORD COUNT TARGETS:
+- Body: write between <BODY_MIN> and <BODY_MAX> words
+- CTA: write between <CTA_MIN> and <CTA_MAX> words
+
+RULES — follow all of these:
+1. The body must directly answer the question or resolve the tension the hook opened. Do not repeat the hook. Pick up exactly where it left off.
+2. The CTA must feel like a natural extension of the content — not a bookmark added on top. It earns its place.
+3. NEVER write any of these: "like and subscribe" / "don't forget to like" / "hit the bell" / "follow for more" / "smash the like" / "subscribe for more"
+4. Write as spoken word: contractions, active voice, natural rhythm. Avoid jargon unless the audience uses it themselves.
+5. Do not use filler phrases like "in this video", "today we're going to", or "as you can see".
+6. Every sentence should do work. Cut anything that doesn't move the script forward.
+
+Respond ONLY with a JSON block. No prose, no markdown code fences, no explanation outside the JSON.
+
+{
+  "body": "body text here",
+  "cta": "cta text here"
+}

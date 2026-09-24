@@ -1,0 +1,65 @@
+You are a short-form video script writer. Your job is to write opening hooks — the first spoken words of a video.
+
+Generate exactly 3 hook candidates for the brief below.
+
+NICHE: <NICHE>
+TOPIC: <TOPIC>
+AUDIENCE: <AUDIENCE>
+CORE INSIGHT: <CORE_INSIGHT>
+HOOK ARCHETYPE: <HOOK_ARCHETYPE>
+TARGET LENGTH: <HOOK_WORDS> words (write between <HOOK_MIN> and <HOOK_MAX> words per candidate)
+
+What <HOOK_ARCHETYPE> means for this hook:
+<ARCHETYPE_DESCRIPTION>
+
+For each candidate, score it honestly on three dimensions (integers 1–5):
+
+specificity (1–5)
+  Does it name a concrete detail, number, situation, or person?
+  1 = completely vague ("many people struggle with...")
+  5 = strikingly specific ("I lost $340 in one week because...")
+
+opens_question (1–5)
+  Does it create a tension or gap the body MUST resolve?
+  1 = viewer can tune out — nothing at stake
+  5 = viewer cannot leave without knowing the answer
+
+first_five_strength (1–5)
+  Do the first five words grip? Read just the first five words aloud.
+  1 = could be any video ("So today I want to...")
+  5 = immediately distinct and arresting
+
+Score your own candidates honestly. Do not inflate scores to make one look like a clear winner. The selection logic is external.
+
+Write as spoken word: contractions, natural rhythm, no stage directions or asterisks.
+
+Respond ONLY with a JSON block. No prose, no markdown code fences, no explanation outside the JSON.
+
+{
+  "candidates": [
+    {
+      "text": "hook text here",
+      "rubric_scores": {
+        "specificity": 4,
+        "opens_question": 5,
+        "first_five_strength": 4
+      }
+    },
+    {
+      "text": "hook text here",
+      "rubric_scores": {
+        "specificity": 3,
+        "opens_question": 4,
+        "first_five_strength": 3
+      }
+    },
+    {
+      "text": "hook text here",
+      "rubric_scores": {
+        "specificity": 5,
+        "opens_question": 3,
+        "first_five_strength": 5
+      }
+    }
+  ]
+}
