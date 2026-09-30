@@ -1,0 +1,56 @@
+{
+  "strategy": {
+    "audience": "Knowledge workers and ambitious professionals aged 22-38 who constantly write long to-do lists but end the day feeling overwhelmed and unproductive.",
+    "core_insight": "A long to-do list is not a productivity tool; it is a psychological shield that lets you feel productive while actually avoiding the single hardest, most important task.",
+    "hook_archetype": "bold_claim",
+    "body_structure": "problem_agitate_solve",
+    "content_goal": "persuade",
+    "reasoning": "A bold claim immediately challenges the audience's deeply ingrained habits around task management, creating instant cognitive dissonance. The problem-agitate-solve structure then validates their daily overwhelm before dismantling the root cause and offering a radically simpler alternative."
+  },
+  "cta_style": "follow",
+  "budget": {
+    "total_words": 140,
+    "hook_words": 28,
+    "body_words": 95,
+    "cta_words": 17
+  },
+  "hook_candidates": [
+    {
+      "text": "Your daily thirty item to do list is not a productivity system, it is an elaborate psychological shield you use to avoid doing the one terrifying task that actually matters.",
+      "rubric_scores": {
+        "specificity": 4,
+        "opens_question": 5,
+        "first_five_strength": 4
+      },
+      "_score": 4.4
+    },
+    {
+      "text": "Writing a massive list of tasks every morning does not mean you are a high performer, it means you are terrified of failing at the single goal that could change your career.",
+      "rubric_scores": {
+        "specificity": 3,
+        "opens_question": 4,
+        "first_five_strength": 5
+      },
+      "_score": 3.9
+    },
+    {
+      "text": "Checking off twenty small boxes on your planner each day is actually keeping you broke because you are using busywork to hide from the massive priority you refuse to touch.",
+      "rubric_scores": {
+        "specificity": 4,
+        "opens_question": 5,
+        "first_five_strength": 4
+      },
+      "_score": 4.4
+    }
+  ],
+  "repaired": false,
+  "word_counts": {
+    "hook": 30,
+    "body": 91,
+    "cta": 14,
+    "total": 135
+  },
+  "estimated_seconds": 57.9,
+  "target_seconds": 60,
+  "validation_passed": true
+}

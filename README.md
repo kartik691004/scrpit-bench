@@ -13,20 +13,20 @@ cd script-bench
 # 2. Install dependencies
 pip install -r requirements.txt
 
-# 3. Add your OpenAI API key
+# 3. Add your Gemini API key
 cp .env.example .env
-# Edit .env and replace the placeholder with your real key
+# Edit .env and replace the placeholder with your real key (https://aistudio.google.com/apikey)
 
 # 4. Run
 python main.py --niche "personal finance" --topic "why your savings account is losing you money" --seconds 60
 ```
 
-Output (stdout):
+Output (stdout — verbatim, see [samples/sample_1.json](samples/sample_1.json)):
 ```json
 {
-  "hook": "...",
-  "body": "...",
-  "cta":  "..."
+  "hook": "You are losing money every single day your emergency fund sits in that big bank account because inflation is eating your savings faster than interest ever could.",
+  "body": "That big traditional bank is paying you a pathetic zero point zero one percent interest while the cost of everything keeps climbing. You think you are being responsible by hoarding cash, but your purchasing power is evaporating month after month. You are essentially paying the bank to hold money that buys you less and less. Stop letting them profit off your caution. Move that cash into a high yield savings account today. You will instantly start earning four or five percent interest, completely risk free, turning inflation from an invisible enemy into a minor speed bump for your goals.",
+  "cta": "Hit that follow button to finally master your money and build wealth that actually outpaces inflation."
 }
 ```
 
@@ -41,7 +41,7 @@ Options:
   --niche          TEXT          Content niche  [required]
   --topic          TEXT          One-sentence topic  [required]
   --seconds        INT (15–120)  Target runtime in seconds  [required]
-  --model          TEXT          OpenAI model (default: gpt-4o)
+  --model          TEXT          Model ID (default: gemini-3.8-flash)
   --insights                     Print internal reasoning to stdout
   --save-insights                Save internal reasoning to <niche>_<seconds>s_insights.json
   --help                         Show this message and exit
@@ -78,8 +78,8 @@ Before any writing happens, the pipeline computes a deterministic word budget:
 ```
 total_words  = round((target_seconds / 60) × 140)   # 140 wpm — midpoint of 130–150 spoken wpm
 hook_words   = 20% of total
-body_words   = 67% of total
-cta_words    = 13% of total
+body_words   = 68% of total
+cta_words    = 12% of total
 ```
 
 The hook gets a disproportionately small share because its job is density, not length — a five-word hook that creates real tension beats a twenty-word one that meanders.
@@ -133,10 +133,14 @@ Five verbatim outputs across different niches and runtimes are in the `samples/`
 | File | Niche | Seconds | Hook archetype |
 |------|-------|---------|----------------|
 | `sample_1.json` | Personal finance | 60 | bold_claim |
-| `sample_2.json` | Fitness | 45 | curiosity_gap |
-| `sample_3.json` | Productivity | 60 | story |
-| `sample_4.json` | Parenting | 30 | direct_question |
-| `sample_5.json` | Home cooking | 45 | pattern_interrupt |
+| `sample_2.json` | Fitness | 45 | bold_claim |
+| `sample_3.json` | Productivity | 60 | bold_claim |
+| `sample_4.json` | Parenting | 30 | curiosity_gap |
+| `sample_5.json` | Home cooking | 45 | curiosity_gap |
+
+All five are verbatim CLI output — unedited. Two runs (samples 1 and 4) needed
+the single repair pass before validation cleared; the insights sidecars show
+exactly which section was regenerated and why.
 
 ---
 
@@ -159,16 +163,22 @@ For the full editorial argument, see [QUALITY_NOTE.md](QUALITY_NOTE.md).
 ```
 script-bench/
 ├── src/
-│   ├── pipeline.py          # orchestrator
+│   ├── pipeline.py          # orchestrator + fixed 20/68/12 word budget
 │   ├── strategy.py          # stage 1: LLM strategy call
 │   ├── generator.py         # stages 2–3: hook + body generation
 │   ├── validator.py         # stage 4: deterministic validation
 │   ├── cta.py               # CTA style mapping table
+│   ├── llm.py               # provider transport (Gemini) — the ONLY provider-aware module
+│   ├── schemas.py           # JSON schemas for structured output
 │   ├── utils.py             # prompt rendering utility
 │   └── prompts/
 │       ├── strategy.txt
 │       ├── hook_candidates.txt
 │       └── body_cta.txt
+├── tools/
+│   └── generate_samples.py  # one-command runner for the five samples
+├── tests/
+│   └── test_validator.py    # unit tests for the deterministic validator
 ├── samples/                 # 5 × verbatim outputs + insights sidecars
 ├── main.py                  # CLI entry point
 ├── requirements.txt
@@ -198,7 +208,16 @@ These were deliberate cuts made against a 4–6 hour effort budget. Each is note
 ## Prerequisites
 
 - Python 3.11+
-- An OpenAI API key (set in `.env`)
+- A Gemini API key (set in `.env` as `GEMINI_API_KEY`; get one at https://aistudio.google.com/apikey)
 - `pip install -r requirements.txt`
 
 The entire pipeline runs in a single `python main.py ...` call. No server, no database, no build step.
+
+**Model note:** the default model (`gemini-3.8-flash`) is the newest Flash
+generation, but on a brand-new model's launch day its free-tier quota is the
+tightest you'll meet on this account. The repo therefore ships defaulting to
+`gemini-3.5-flash-lite` via `SCRIPT_BENCH_MODEL` — a practical trade-off for
+quota headroom, not a quality compromise: every pipeline guarantee (fixed word
+budget, deterministic scoring, validation, repair) is model-independent, and
+`gemini-3.8-flash` remains one env-var away if your account has paid credits.
+Generation on the 3.5-lite vs 3.8 tier can differ in polish, not in structure.

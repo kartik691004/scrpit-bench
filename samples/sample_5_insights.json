@@ -1,0 +1,56 @@
+{
+  "strategy": {
+    "audience": "busy home cooks who want restaurant-quality meals but believe authentic techniques require expensive ingredients and professional equipment.",
+    "core_insight": "The secret to glossy, restaurant-quality pasta sauce is not expensive butter or heavy cream, but the starchy pasta water you normally throw down the drain.",
+    "hook_archetype": "curiosity_gap",
+    "body_structure": "problem_agitate_solve",
+    "content_goal": "educate",
+    "reasoning": "The curiosity gap hook immediately targets the hidden waste habit of draining pasta water without context, creating instant tension. The problem-agitate-solve structure then validates their current frustration with watery homemade sauce before revealing the pantry-staple fix."
+  },
+  "cta_style": "save",
+  "budget": {
+    "total_words": 105,
+    "hook_words": 21,
+    "body_words": 71,
+    "cta_words": 13
+  },
+  "hook_candidates": [
+    {
+      "text": "Stop pouring your pasta water down the sink immediately because that cloudy liquid is hiding the ultimate restaurant emulsion secret.",
+      "rubric_scores": {
+        "specificity": 4,
+        "opens_question": 5,
+        "first_five_strength": 4
+      },
+      "_score": 4.4
+    },
+    {
+      "text": "You are wasting the most valuable ingredient in your kitchen every single time you strain your pasta into the drain.",
+      "rubric_scores": {
+        "specificity": 3,
+        "opens_question": 4,
+        "first_five_strength": 3
+      },
+      "_score": 3.4
+    },
+    {
+      "text": "That starchy water you usually throw away is actually the missing link holding your homemade pasta sauce together like a pro.",
+      "rubric_scores": {
+        "specificity": 4,
+        "opens_question": 4,
+        "first_five_strength": 4
+      },
+      "_score": 4.0
+    }
+  ],
+  "repaired": false,
+  "word_counts": {
+    "hook": 20,
+    "body": 74,
+    "cta": 13,
+    "total": 107
+  },
+  "estimated_seconds": 45.9,
+  "target_seconds": 45,
+  "validation_passed": true
+}

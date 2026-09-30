@@ -1,0 +1,56 @@
+{
+  "strategy": {
+    "audience": "25-35 year olds with modest savings sitting in traditional bank accounts who pride themselves on being financially responsible but feel stuck.",
+    "core_insight": "Keeping your emergency fund in a traditional big-bank savings account isn't safe; it's a guaranteed way to let inflation silently steal your hard-earned progress.",
+    "hook_archetype": "bold_claim",
+    "body_structure": "problem_agitate_solve",
+    "content_goal": "persuade",
+    "reasoning": "The bold claim immediately challenges the deeply ingrained belief that leaving money in a savings account is risk-free. Using the problem-agitate-solve structure allows us to highlight the hidden cost of inflation before presenting high-yield accounts as the clear, actionable fix."
+  },
+  "cta_style": "follow",
+  "budget": {
+    "total_words": 140,
+    "hook_words": 28,
+    "body_words": 95,
+    "cta_words": 17
+  },
+  "hook_candidates": [
+    {
+      "text": "Your high yield savings account is actually a trap that is silently bleeding your emergency fund dry while you think you are being financially responsible.",
+      "rubric_scores": {
+        "specificity": 4,
+        "opens_question": 4,
+        "first_five_strength": 4
+      },
+      "_score": 4.0
+    },
+    {
+      "text": "Leaving ten thousand dollars in a traditional big bank savings account is practically guaranteeing that inflation will steal hundreds of dollars of your hard earned progress.",
+      "rubric_scores": {
+        "specificity": 4,
+        "opens_question": 5,
+        "first_five_strength": 3
+      },
+      "_score": 4.15
+    },
+    {
+      "text": "You are losing money every single day your emergency fund sits in that big bank account because inflation is eating your savings faster than interest ever could.",
+      "rubric_scores": {
+        "specificity": 4,
+        "opens_question": 4,
+        "first_five_strength": 5
+      },
+      "_score": 4.25
+    }
+  ],
+  "repaired": true,
+  "word_counts": {
+    "hook": 27,
+    "body": 99,
+    "cta": 16,
+    "total": 142
+  },
+  "estimated_seconds": 60.9,
+  "target_seconds": 60,
+  "validation_passed": true
+}

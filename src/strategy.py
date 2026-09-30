@@ -12,13 +12,17 @@ Calls the LLM once to infer:
 All choices are validated against explicit allowlists — the pipeline fails fast
 if the model returns a value not in the enum, rather than silently proceeding
 with a bad archetype.
+
+Provider note: the call goes through src/llm.py (the only provider-aware
+module) using Gemini's native JSON mode with the STRATEGY_SCHEMA shape
+constraint. This module contains no provider code.
 """
 
 import json
 from pathlib import Path
 
-from openai import OpenAI
-
+from .llm import call_json
+from .schemas import STRATEGY_SCHEMA
 from .utils import fill_prompt
 
 # ── Allowlists (single source of truth) ───────────────────────────────────────
@@ -55,29 +59,11 @@ class ValidationError(Exception):
     """Raised when a parsed value falls outside the allowed enum."""
 
 
-# ── LLM call ──────────────────────────────────────────────────────────────────
-def _call_llm(client: OpenAI, model: str, prompt: str) -> str:
-    """Single LLM call. Returns raw response text."""
-    resp = client.chat.completions.create(
-        model=model,
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.6,  # slightly lower for strategy: we want deliberate choices
-    )
-    return resp.choices[0].message.content.strip()
-
-
 # ── Parsing ────────────────────────────────────────────────────────────────────
 def _parse_json(raw: str) -> dict:
-    """Extract and parse a JSON block from the LLM response."""
-    text = raw.strip()
-    # Strip markdown code fences if present
-    if text.startswith("```"):
-        lines = text.splitlines()
-        # Drop first line (```json or ```) and last line (```)
-        inner = lines[1:] if lines[-1].strip() != "```" else lines[1:-1]
-        text = "\n".join(inner)
+    """Parse a JSON response. Raises ParseError on invalid JSON."""
     try:
-        return json.loads(text)
+        return json.loads(raw)
     except json.JSONDecodeError as exc:
         raise ParseError(
             f"Strategy response is not valid JSON: {exc}\n"
@@ -124,17 +110,17 @@ def _validate_strategy(data: dict) -> dict:
 
 
 # ── Public API ─────────────────────────────────────────────────────────────────
-def run_strategy(niche: str, topic: str, client: OpenAI, model: str) -> dict:
+def run_strategy(niche: str, topic: str, client, model: str) -> dict:
     """
     Run the strategy stage.
 
-    Makes one LLM call (with one retry on JSON parse failure) and returns
-    a validated strategy dict.
+    Makes one structured-output LLM call (with one retry on JSON parse
+    failure) and returns a validated strategy dict.
 
     Args:
         niche:  Content niche string, e.g. "personal finance".
         topic:  One-sentence topic string.
-        client: Initialised OpenAI client.
+        client: Transport client from src.llm.make_client().
         model:  Model ID string.
 
     Returns:
@@ -144,18 +130,18 @@ def run_strategy(niche: str, topic: str, client: OpenAI, model: str) -> dict:
     template = PROMPT_PATH.read_text(encoding="utf-8")
     prompt = fill_prompt(template, niche=niche, topic=topic)
 
-    raw = _call_llm(client, model, prompt)
+    raw = call_json(client, model, prompt, STRATEGY_SCHEMA, temperature=0.6)
 
     try:
         data = _parse_json(raw)
     except ParseError:
-        # One retry with an explicit instruction
+        # One retry — native JSON mode makes this rare, but keep the guarantee.
         retry_prompt = (
             prompt
             + "\n\nYour previous response was not valid JSON. "
-            "Respond ONLY with the JSON block. No prose, no code fences."
+            "Respond ONLY with the JSON object."
         )
-        raw = _call_llm(client, model, retry_prompt)
+        raw = call_json(client, model, retry_prompt, STRATEGY_SCHEMA, temperature=0.6)
         data = _parse_json(raw)  # let it raise if it fails again
 
     return _validate_strategy(data)

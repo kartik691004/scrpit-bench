@@ -15,23 +15,18 @@ Public output: {hook, body, cta}  (exactly three fields)
 Internal state: returned under _insights key; main.py strips it before display.
 """
 
-import os
-
-from openai import OpenAI
-
+from .llm import make_client, DEFAULT_MODEL
 from .strategy import run_strategy
 from .generator import generate_hook, generate_body_cta
 from .validator import validate, WPM
 from .cta import get_cta_style, get_cta_instruction
 
 # ── Budget constants ────────────────────────────────────────────────────────────
-# Fractions must sum to 1.0.
+# Fractions must sum to 1.0 and are FIXED (not ranges).
 # Hook gets a disproportionately small but high-impact share.
 HOOK_FRACTION: float = 0.20   # 20%
-BODY_FRACTION: float = 0.67   # 67%
-CTA_FRACTION:  float = 0.13   # 13%
-
-DEFAULT_MODEL = "gpt-4o"
+BODY_FRACTION: float = 0.68   # 68%
+CTA_FRACTION:  float = 0.12   # 12%
 
 
 # ── Exceptions ─────────────────────────────────────────────────────────────────
@@ -54,18 +49,13 @@ class Pipeline:
     Stateless pipeline runner. One instance per process; call .run() multiple times.
 
     Args:
-        model:   OpenAI model ID (default: gpt-4o).
-        api_key: Override OPENAI_API_KEY env var (useful for testing).
+        model:   Model ID (default: gemini-3.8-flash, from src/llm.py).
+        api_key: Override GEMINI_API_KEY env var (useful for testing).
     """
 
     def __init__(self, model: str = DEFAULT_MODEL, api_key: str | None = None):
-        key = api_key or os.environ.get("OPENAI_API_KEY")
-        if not key:
-            raise ValueError(
-                "OPENAI_API_KEY is not set. "
-                "Copy .env.example to .env and add your key."
-            )
-        self.client = OpenAI(api_key=key)
+        # make_client() raises ValueError with setup instructions if no key.
+        self.client = make_client(api_key=api_key)
         self.model = model
 
     # ── Budget ─────────────────────────────────────────────────────────────────

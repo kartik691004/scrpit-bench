@@ -1,0 +1,56 @@
+{
+  "strategy": {
+    "audience": "20-35 year old regular gym-goers who rush through workouts and plateau without knowing why",
+    "core_insight": "Static stretching before lifting actually weakens your muscle contractions, turning your warm-up into a progress killer.",
+    "hook_archetype": "bold_claim",
+    "body_structure": "problem_agitate_solve",
+    "content_goal": "educate",
+    "reasoning": "A bold claim immediately challenges common fitness dogma and creates tension for an audience that values efficiency. The problem-agitate-solve structure allows us to dismantle the old habit, highlight the negative impact on their strength gains, and offer a scientifically backed replacement routine."
+  },
+  "cta_style": "save",
+  "budget": {
+    "total_words": 105,
+    "hook_words": 21,
+    "body_words": 71,
+    "cta_words": 13
+  },
+  "hook_candidates": [
+    {
+      "text": "Stretching your hamstrings right before heavy squats is actively cutting your muscle strength by up to thirty percent every single time.",
+      "rubric_scores": {
+        "specificity": 5,
+        "opens_question": 4,
+        "first_five_strength": 4
+      },
+      "_score": 4.35
+    },
+    {
+      "text": "Your static warm up routine is the exact reason why your bench press numbers have been stuck for the last three months.",
+      "rubric_scores": {
+        "specificity": 4,
+        "opens_question": 4,
+        "first_five_strength": 3
+      },
+      "_score": 3.75
+    },
+    {
+      "text": "Doing traditional stretches before lifting weights makes your muscle fibers weaker and sabotages every single rep of your entire workout.",
+      "rubric_scores": {
+        "specificity": 4,
+        "opens_question": 5,
+        "first_five_strength": 4
+      },
+      "_score": 4.4
+    }
+  ],
+  "repaired": false,
+  "word_counts": {
+    "hook": 20,
+    "body": 63,
+    "cta": 15,
+    "total": 98
+  },
+  "estimated_seconds": 42.0,
+  "target_seconds": 45,
+  "validation_passed": true
+}

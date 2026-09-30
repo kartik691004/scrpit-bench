@@ -6,20 +6,24 @@ Stage 2 — Hook selection:
   for specificity, opens_question, and first_five_strength (all integers 1–5).
   The winner is chosen by a DETERMINISTIC weighted sum in Python — the model
   provides data; Python makes the decision. Runner-up candidates and their scores
-  are stored in the _hook_insights field (internal only, never public output).
+  are stored in the _insights field (internal only, never public output).
 
 Stage 3 — Body + CTA generation:
   A single LLM call writes the body and CTA together, given the chosen hook,
   body structure, word budget, and CTA style instruction.
 
 Both stages use one retry on JSON parse failure.
+
+Provider note: calls go through src/llm.py (the only provider-aware module)
+using Gemini's native JSON mode with the HOOK_SCHEMA / BODY_CTA_SCHEMA shape
+constraints. This module contains no provider code.
 """
 
 import json
 from pathlib import Path
 
-from openai import OpenAI
-
+from .llm import call_json
+from .schemas import BODY_CTA_SCHEMA, HOOK_SCHEMA
 from .utils import fill_prompt
 
 # ── Prompt paths ───────────────────────────────────────────────────────────────
@@ -92,15 +96,10 @@ def _score_candidate(candidate: dict) -> float:
 
 
 # ── JSON parsing ───────────────────────────────────────────────────────────────
-def _extract_json(raw: str) -> dict:
-    """Extract and parse a JSON block from raw LLM output."""
-    text = raw.strip()
-    if text.startswith("```"):
-        lines = text.splitlines()
-        inner = lines[1:] if lines[-1].strip() != "```" else lines[1:-1]
-        text = "\n".join(inner)
+def _parse_json(raw: str) -> dict:
+    """Parse a JSON response. Raises ParseError on invalid JSON."""
     try:
-        return json.loads(text)
+        return json.loads(raw)
     except json.JSONDecodeError as exc:
         raise ParseError(
             f"Response is not valid JSON: {exc}\n"
@@ -108,40 +107,24 @@ def _extract_json(raw: str) -> dict:
         ) from exc
 
 
-# ── LLM call ──────────────────────────────────────────────────────────────────
-def _call_llm(
-    client: OpenAI,
-    model: str,
-    prompt: str,
-    temperature: float = 0.85,
-) -> str:
-    """Single LLM call. Returns raw response text."""
-    resp = client.chat.completions.create(
-        model=model,
-        messages=[{"role": "user", "content": prompt}],
-        temperature=temperature,
-    )
-    return resp.choices[0].message.content.strip()
-
-
 def _call_with_retry(
-    client: OpenAI,
+    client,
     model: str,
     prompt: str,
-    temperature: float = 0.85,
+    json_schema: dict,
+    temperature: float,
 ) -> dict:
-    """Call LLM and parse JSON. One retry on parse failure."""
-    raw = _call_llm(client, model, prompt, temperature)
+    """One structured-output call + parse. One retry on parse failure."""
+    raw = call_json(client, model, prompt, json_schema, temperature)
     try:
-        return _extract_json(raw)
+        return _parse_json(raw)
     except ParseError:
         retry_prompt = (
             prompt
             + "\n\nYour previous response was not valid JSON. "
-            "Respond ONLY with the JSON block. No prose, no code fences."
+            "Respond ONLY with the JSON object."
         )
-        raw = _call_llm(client, model, retry_prompt, temperature)
-        return _extract_json(raw)  # raises if it fails again
+        return _parse_json(call_json(client, model, retry_prompt, json_schema, temperature))
 
 
 # ── Stage 2: Hook selection ────────────────────────────────────────────────────
@@ -152,7 +135,7 @@ def generate_hook(
     core_insight: str,
     hook_archetype: str,
     hook_words: int,
-    client: OpenAI,
+    client,
     model: str,
 ) -> tuple[str, list[dict]]:
     """
@@ -180,7 +163,7 @@ def generate_hook(
         archetype_description=archetype_desc,
     )
 
-    data = _call_with_retry(client, model, prompt)
+    data = _call_with_retry(client, model, prompt, HOOK_SCHEMA, temperature=0.85)
     candidates: list[dict] = data.get("candidates", [])
 
     if not candidates:
@@ -206,7 +189,7 @@ def generate_body_cta(
     cta_instruction: str,
     body_words: int,
     cta_words: int,
-    client: OpenAI,
+    client,
     model: str,
 ) -> tuple[str, str]:
     """
@@ -243,7 +226,7 @@ def generate_body_cta(
         cta_max=cta_max,
     )
 
-    data = _call_with_retry(client, model, prompt, temperature=0.80)
+    data = _call_with_retry(client, model, prompt, BODY_CTA_SCHEMA, temperature=0.80)
 
     body = str(data.get("body", "")).strip()
     cta = str(data.get("cta", "")).strip()
