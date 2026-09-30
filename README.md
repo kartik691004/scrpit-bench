@@ -8,7 +8,7 @@ A short-form video script generator built for the Obula pipeline. It takes a nic
 
 ```bash
 # 1. Clone / download the repo
-cd script-bench
+cd <project-folder>   # the folder created by cloning or downloading
 
 # 2. Install dependencies
 pip install -r requirements.txt
@@ -213,11 +213,11 @@ These were deliberate cuts made against a 4–6 hour effort budget. Each is note
 
 The entire pipeline runs in a single `python main.py ...` call. No server, no database, no build step.
 
-**Model note:** the default model (`gemini-3.8-flash`) is the newest Flash
-generation, but on a brand-new model's launch day its free-tier quota is the
-tightest you'll meet on this account. The repo therefore ships defaulting to
-`gemini-3.5-flash-lite` via `SCRIPT_BENCH_MODEL` — a practical trade-off for
-quota headroom, not a quality compromise: every pipeline guarantee (fixed word
+**Model note:** the shipped default model is `gemini-3.5-flash-lite` — chosen
+for free-tier quota headroom and stability (the newest tier, `gemini-3.8-flash`,
+has been returning launch-day 503s on free accounts). This is a practical
+capacity trade-off, not a quality compromise: every pipeline guarantee (fixed word
 budget, deterministic scoring, validation, repair) is model-independent, and
-`gemini-3.8-flash` remains one env-var away if your account has paid credits.
-Generation on the 3.5-lite vs 3.8 tier can differ in polish, not in structure.
+`gemini-3.8-flash` remains one env-var away via `SCRIPT_BENCH_MODEL` if your
+account has paid credits. Generation on the lite vs 3.8 tier can differ in
+polish, not in structure.

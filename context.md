@@ -13,7 +13,7 @@ assignment). Not part of the submission package.
 | Word budget | FIXED 20% hook / 68% body / 12% cta of `round(seconds/60 × 140)` | constants in `src/pipeline.py`; must stay fixed before sample generation |
 | LLM provider | Google Gemini via `google-genai` SDK | `src/llm.py` is the ONLY provider-aware module |
 | JSON output | Gemini native JSON mode (`response_mime_type` + `response_json_schema`) | schemas in `src/schemas.py`; shape constraint only — allowlists (strategy) and deterministic validation (validator) unchanged |
-| Model | `gemini-3.8-flash` | chosen from the live models-list (2026-09-30): latest stable Flash generation, 1M in / 64K out, low latency, cheapest tier that reliably follows structured-output instructions for short JSON |
+| Model | `gemini-3.5-flash-lite` (shipped default) | free-tier quota headroom — `gemini-3.8-flash` stayed the 503-prone newest tier on free accounts, so the default moved to the stable lite model; override via `SCRIPT_BENCH_MODEL` |
 | Env var | `GEMINI_API_KEY` | never committed; `.env` is gitignored; optional `SCRIPT_BENCH_MODEL` overrides the model default |
 | Samples | `samples/sample_N.json` + `sample_N_insights.json` | must be real pipeline output, unedited; `tools/generate_samples.py` runs all five; no quality-based re-rolls |
 | Tests | `tests/test_validator.py` | validator only, pure Python, no LLM, runs in <1s |
@@ -34,6 +34,10 @@ assignment). Not part of the submission package.
   (new-model free-tier caps are typically tighter/more volatile; the batch
   needs ~15–20 calls). Same call shape, same schemas — a transport-level
   choice, not a quality compromise.
+- **2026-09-30** — Shipped default made consistent: `src/llm.py` `DEFAULT_MODEL`
+  set to `gemini-3.5-flash-lite` (was `gemini-3.8-flash`) after a fresh-clone
+  quickstart test hit launch-day 503s on the 3.8 default twice; docs and
+  `.env.example` aligned to match the code.
 
 ## Open Questions
 
